@@ -1,0 +1,10 @@
+<Solution>
+  <Folder Name="/src/">
+    <Project Path="src/CpApis.Api/CpApis.Api.csproj" />
+    <Project Path="src/CpApis.Mcp/CpApis.Mcp.csproj" />
+    <Project Path="src/CpApis.Mcp.Core/CpApis.Mcp.Core.csproj" />
+    <Project Path="src/CpApis.Mcp.Http/CpApis.Mcp.Http.csproj" />
+    <Project Path="src/CpApis.InventoryGenerator/CpApis.InventoryGenerator.csproj" />
+    <Project Path="src/CpApis.Shared/CpApis.Shared.csproj" />
+  </Folder>
+</Solution>

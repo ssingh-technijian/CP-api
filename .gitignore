@@ -1,0 +1,17 @@
+# Build output
+**/bin/
+**/obj/
+
+# Publish bundles
+publish/
+
+# Generated inventory and runtime artifacts
+artifacts/
+
+# IDE and user-specific files
+.vs/
+*.suo
+*.user
+
+# Local-only configuration
+src/**/appsettings.Local.json
