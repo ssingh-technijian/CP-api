@@ -3,6 +3,9 @@ using CpApis.Api.OpenApi;
 using CpApis.Api.Services;
 using CpApis.Shared.Options;
 using CpApis.Shared.Services;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.IdentityModel.Tokens;
+using Microsoft.OpenApi.Models;
 
 var builder = WebApplication.CreateBuilder(new WebApplicationOptions
 {
@@ -16,6 +19,28 @@ builder.Configuration
     .AddCommandLine(args);
 
 builder.Services.Configure<RuntimeCatalogOptions>(builder.Configuration.GetSection("RuntimeCatalog"));
+builder.Services.AddHttpClient();
+
+var azureAdSection = builder.Configuration.GetRequiredSection("AzureAd");
+var azureAdInstance = (azureAdSection["Instance"] ?? "https://login.microsoftonline.com/").TrimEnd('/');
+var azureAdTenantId = azureAdSection["TenantId"]?.Trim();
+var azureAdClientId = azureAdSection["ClientId"]?.Trim();
+var azureAdAudience = azureAdSection["Audience"]?.Trim();
+
+if (string.IsNullOrWhiteSpace(azureAdTenantId) || string.IsNullOrWhiteSpace(azureAdClientId))
+{
+    throw new InvalidOperationException("AzureAd:TenantId and AzureAd:ClientId must be configured.");
+}
+
+azureAdAudience ??= $"api://{azureAdClientId}";
+
+var authority = $"{azureAdInstance}/{azureAdTenantId}/v2.0";
+var validIssuers = new[]
+{
+    $"{azureAdInstance}/{azureAdTenantId}/v2.0",
+    $"{azureAdInstance}/{azureAdTenantId}/",
+    $"https://sts.windows.net/{azureAdTenantId}/"
+};
 
 builder.Services.AddCors(options =>
 {
@@ -27,6 +52,29 @@ builder.Services.AddCors(options =>
             .AllowAnyMethod();
     });
 });
+
+builder.Services
+    .AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
+    .AddJwtBearer(options =>
+    {
+        options.Authority = authority;
+        options.MapInboundClaims = false;
+        options.TokenValidationParameters = new TokenValidationParameters
+        {
+            ValidateIssuer = true,
+            ValidIssuers = validIssuers,
+            ValidateAudience = true,
+            ValidAudiences = new[]
+            {
+                azureAdClientId,
+                azureAdAudience
+            },
+            ValidateLifetime = true,
+            NameClaimType = "name"
+        };
+    });
+
+builder.Services.AddAuthorization();
 
 builder.Services
     .AddControllers()
@@ -45,6 +93,29 @@ builder.Services.AddSwaggerGen(options =>
         Description = "Metadata-driven API for stored procedures discovered from the Client Portal codebase."
     });
     options.OperationFilter<ObjectRequestBodyOperationFilter>();
+    options.AddSecurityDefinition("Bearer", new OpenApiSecurityScheme
+    {
+        Name = "Authorization",
+        Type = SecuritySchemeType.Http,
+        Scheme = "bearer",
+        BearerFormat = "JWT",
+        In = ParameterLocation.Header,
+        Description = "Paste a Microsoft Entra access token from the existing Client Portal login."
+    });
+    options.AddSecurityRequirement(new OpenApiSecurityRequirement
+    {
+        {
+            new OpenApiSecurityScheme
+            {
+                Reference = new OpenApiReference
+                {
+                    Type = ReferenceType.SecurityScheme,
+                    Id = "Bearer"
+                }
+            },
+            Array.Empty<string>()
+        }
+    });
 });
 
 builder.Services.AddSingleton<ManifestCatalogService>();
@@ -53,11 +124,15 @@ builder.Services.AddSingleton<DatabaseExecutionService>();
 var app = builder.Build();
 
 app.UseCors("Open");
+app.UseAuthentication();
+app.UseAuthorization();
+
 app.UseSwagger();
 app.UseSwaggerUI();
 
 app.MapGet("/", () => Results.Redirect("/swagger")).ExcludeFromDescription();
-app.MapControllers();
+
+app.MapControllers().RequireAuthorization();
 ExplicitObjectEndpointMapper.Map(app);
 
 app.Run();

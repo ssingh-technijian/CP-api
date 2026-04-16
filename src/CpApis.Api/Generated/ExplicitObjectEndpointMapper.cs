@@ -24,7 +24,8 @@ internal static class ExplicitObjectEndpointMapper
             var moduleName = moduleGroup.First().Module;
             var moduleSegment = moduleGroup.Key;
             var baseGroup = app.MapGroup($"/api/modules/{moduleGroup.Key}")
-                .WithTags(moduleName);
+                .WithTags(moduleName)
+                .RequireAuthorization();
 
             var storedProcedureGroup = baseGroup.MapGroup("/stored-procedures");
 
@@ -75,8 +76,8 @@ internal static class ExplicitObjectEndpointMapper
                         StoredProcedureMetadataBuilder.BuildRequestTemplate(captured),
                         StoredProcedureMetadataBuilder.BuildRequestBodyDescription(captured)))
                     .WithName(BuildEndpointName("sp", captured))
-                    .WithSummary($"Execute stored procedure {captured.Schema}.{captured.Name}")
-                    .WithDescription("Fill the request body example shown in Swagger and replace the sample values before execution.");
+                    .WithSummary(StoredProcedureMetadataBuilder.BuildFriendlyLabel(captured))
+                    .WithDescription(StoredProcedureMetadataBuilder.BuildEndpointDescription(captured));
             }
         }
     }

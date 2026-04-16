@@ -61,7 +61,7 @@ public sealed class DatabaseExecutionService
         return new CommandExecutionResponse
         {
             DatabaseAlias = item.DatabaseAlias,
-            DatabaseName = item.DatabaseName,
+            DatabaseName = ResolveDatabaseName(connection, item),
             Schema = item.Schema,
             Name = item.Name,
             Kind = item.Kind,
@@ -122,7 +122,7 @@ public sealed class DatabaseExecutionService
         return new QueryExecutionResponse
         {
             DatabaseAlias = item.DatabaseAlias,
-            DatabaseName = item.DatabaseName,
+            DatabaseName = ResolveDatabaseName(connection, item),
             Schema = item.Schema,
             Name = item.Name,
             Kind = item.Kind,
@@ -158,7 +158,7 @@ public sealed class DatabaseExecutionService
         return new ScalarFunctionResponse
         {
             DatabaseAlias = item.DatabaseAlias,
-            DatabaseName = item.DatabaseName,
+            DatabaseName = ResolveDatabaseName(connection, item),
             Schema = item.Schema,
             Name = item.Name,
             Kind = item.Kind,
@@ -460,6 +460,9 @@ public sealed class DatabaseExecutionService
 
         return connectionString;
     }
+
+    private static string ResolveDatabaseName(SqlConnection connection, DatabaseObjectManifest item) =>
+        string.IsNullOrWhiteSpace(connection.Database) ? item.DatabaseName : connection.Database;
 
     private static ParameterManifest ToParameter(ColumnManifest column) =>
         new()
