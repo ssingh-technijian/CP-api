@@ -38,8 +38,9 @@ Supported request fields:
 Internal note behavior:
 
 - A supplied non-empty `Internal_Notes` or `InternalNotes` value still updates `dbo.tbl_Tickets.Internal_Notes`.
-- The same non-empty value is also synced to the latest `dbo.tbl_TicketEntries.Notes` row for that ticket.
-- If the ticket has no entry row yet, the API inserts a minimal active `dbo.tbl_TicketEntries` row and stores the value in `Notes`.
+- If the ticket's effective status resolves to `Internal Ticket`, the same non-empty value is also synced to the latest `dbo.tbl_TicketEntries.Notes` row for that ticket.
+- If the ticket's effective status resolves to `Internal Ticket` and no entry row exists yet, the API inserts a minimal active `dbo.tbl_TicketEntries` row and stores the value in `Notes`.
+- If the ticket status is not `Internal Ticket`, the API does not update `dbo.tbl_TicketEntries.Notes`.
 - `null`, empty, and whitespace-only internal note values are ignored and do not change the ticket note or ticket entry note.
 
 Validation:

@@ -321,7 +321,12 @@ public sealed class TicketsController : ControllerBase
             await ExecuteUpdateTicketAsync(connection, updatedTicket, cancellationToken);
 
             var requestedInternalNotes = FirstNonEmpty(request.Internal_Notes, request.InternalNotes);
-            if (string.IsNullOrWhiteSpace(requestedInternalNotes) is false)
+            var isInternalTicket = string.Equals(
+                resolvedStatus.Description,
+                "Internal Ticket",
+                StringComparison.OrdinalIgnoreCase);
+
+            if (string.IsNullOrWhiteSpace(requestedInternalNotes) is false && isInternalTicket)
             {
                 var actorUsername = FirstNonEmpty(GetActorUsername(), currentTicket.CreatedBy);
                 var assignToDirId = int.TryParse(updatedTicket.AssignToUsername, out var parsedAssignToDirId)
