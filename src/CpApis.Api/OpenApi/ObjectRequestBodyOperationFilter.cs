@@ -10,17 +10,28 @@ internal sealed class ObjectRequestBodyOperationFilter : IOperationFilter
 {
     public void Apply(OpenApiOperation operation, OperationFilterContext context)
     {
-        var metadata = context.ApiDescription.ActionDescriptor.EndpointMetadata
+        var objectMetadata = context.ApiDescription.ActionDescriptor.EndpointMetadata
             .OfType<ObjectRequestBodyMetadata>()
             .FirstOrDefault();
 
-        if (metadata is null || operation.RequestBody?.Content is null)
+        var attributeMetadata = context.ApiDescription.ActionDescriptor.EndpointMetadata
+            .OfType<RequestBodyExampleAttribute>()
+            .FirstOrDefault();
+
+        var description = objectMetadata?.Description ?? attributeMetadata?.Description;
+        var exampleSource = objectMetadata?.RequestExample;
+        if (exampleSource is null && string.IsNullOrWhiteSpace(attributeMetadata?.ExampleJson) is false)
+        {
+            exampleSource = JsonSerializer.Deserialize<JsonElement>(attributeMetadata.ExampleJson);
+        }
+
+        if (description is null || operation.RequestBody?.Content is null)
         {
             return;
         }
 
-        var example = OpenApiAnyBuilder.FromObject(metadata.RequestExample);
-        operation.RequestBody.Description = metadata.Description;
+        var example = OpenApiAnyBuilder.FromObject(exampleSource);
+        operation.RequestBody.Description = description;
 
         foreach (var mediaType in operation.RequestBody.Content.Values)
         {

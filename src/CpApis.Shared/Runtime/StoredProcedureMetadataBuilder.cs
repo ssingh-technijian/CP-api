@@ -114,6 +114,7 @@ public static class StoredProcedureMetadataBuilder
     {
         return item.Parameters
             .Where(parameter => parameter.ParameterId > 0 && parameter.IsOutput is false && string.IsNullOrWhiteSpace(parameter.Name) is false)
+            .Where(parameter => parameter.IsNullable is false && parameter.HasDefaultValue is false)
             .OrderBy(parameter => parameter.ParameterId)
             .ToDictionary(
                 parameter => parameter.Name.TrimStart('@'),
@@ -133,7 +134,16 @@ public static class StoredProcedureMetadataBuilder
         var parameterSummary = string.Join(", ", inputParameters.Select(parameter =>
             $"{parameter.Name.TrimStart('@')} ({parameter.SqlType}{(parameter.IsNullable ? ", nullable" : string.Empty)}{(parameter.HasDefaultValue ? ", default" : string.Empty)})"));
 
-        return $"Fill the JSON body below using these input parameter keys: {parameterSummary}. Use parameter names without the leading @. Output parameters are returned by the API and usually should not be sent.";
+        var optionalParameters = inputParameters
+            .Where(parameter => parameter.IsNullable || parameter.HasDefaultValue)
+            .Select(parameter => parameter.Name.TrimStart('@'))
+            .ToList();
+
+        var optionalHint = optionalParameters.Count == 0
+            ? string.Empty
+            : $" Optional parameters may be omitted entirely; do not send empty strings or zero placeholders unless they are real values. Optional keys: {string.Join(", ", optionalParameters)}.";
+
+        return $"Fill the JSON body below using these input parameter keys: {parameterSummary}. Use parameter names without the leading @. Output parameters are returned by the API and usually should not be sent.{optionalHint}";
     }
 
     public static string BuildFriendlyLabel(DatabaseObjectManifest item)
@@ -302,6 +312,11 @@ public static class StoredProcedureMetadataBuilder
 
     public static object BuildExampleValue(ParameterManifest parameter)
     {
+        if (parameter.IsNullable || parameter.HasDefaultValue)
+        {
+            return null!;
+        }
+
         var sqlType = parameter.SqlType.ToLowerInvariant();
         var parameterName = parameter.Name.TrimStart('@');
 

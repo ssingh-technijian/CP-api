@@ -3,6 +3,7 @@ using System.Globalization;
 using System.Security.Claims;
 using System.Text.RegularExpressions;
 using System.Xml.Linq;
+using CpApis.Api.OpenApi;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Data.SqlClient;
@@ -217,6 +218,9 @@ public sealed class TicketsController : ControllerBase
 
     [HttpPut("{ticketId:int}")]
     [HttpPatch("{ticketId:int}")]
+    [RequestBodyExample(
+        "Only send the ticket fields you want to change. For an internal-notes-only update, send a minimal JSON body like the example below and omit the other properties.",
+        "{\"Internal_Notes\":\"this is test notes\"}")]
     public async Task<IActionResult> UpdateTicket(int ticketId, [FromBody] UpdateTicketRequest? request, CancellationToken cancellationToken)
     {
         if (ticketId <= 0)
