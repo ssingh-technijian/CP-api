@@ -21,6 +21,8 @@ public sealed class TicketsController : ControllerBase
     private const string DefaultEmptyText = "";
     private const string DefaultPriority = "Watch";
     private const int DefaultParentId = 0;
+    private const string DefaultTimeEntryActorAlias = "Jian";
+    private const string DefaultTimeEntryActorUsername = "jian@technijian.com";
     private const int DefaultRecurringOption = 0;
     private const string DefaultRecurringType = "0";
     private const string DefaultRequestType = "Client Portal";
@@ -371,6 +373,188 @@ public sealed class TicketsController : ControllerBase
         }
     }
 
+    [HttpPost("{ticketId:int}/time-entries")]
+    [RequestBodyExample(
+        "Send the time window and notes for the work performed. If CreatedBy is omitted, the API logs the time entry under the AI service user Jian.",
+        "{\"StartDateTime\":\"2026-05-05T10:00:00\",\"EndDateTime\":\"2026-05-05T10:15:00\",\"Notes\":\"AI follow-up completed\",\"InternalNotes\":\"Reviewed internally before client update\"}")]
+    public async Task<IActionResult> AddTicketTimeEntry(int ticketId, [FromBody] AddTicketTimeEntryRequest? request, CancellationToken cancellationToken)
+    {
+        if (ticketId <= 0)
+        {
+            return BadRequestProblem("Invalid request", "TicketID must be greater than zero.");
+        }
+
+        if (request is null)
+        {
+            return BadRequestProblem("Invalid request", "Request body is required.");
+        }
+
+        var validationError = Validate(request);
+        if (validationError is not null)
+        {
+            return BadRequestProblem("Invalid request", validationError);
+        }
+
+        try
+        {
+            await using var connection = new SqlConnection(GetConnectionString("client-portal"));
+            await connection.OpenAsync(cancellationToken);
+
+            var ticket = await GetTicketTimeEntryContextAsync(connection, ticketId, cancellationToken);
+            if (ticket is null)
+            {
+                return NotFound(new ProblemDetails
+                {
+                    Title = "Ticket not found",
+                    Detail = $"TicketID '{ticketId}' was not found.",
+                    Status = StatusCodes.Status404NotFound
+                });
+            }
+
+            var actorUsername = NormalizeTimeEntryUsername(
+                FirstNonEmpty(request.CreatedBy, request.Username, DefaultTimeEntryActorAlias));
+            var actorUser = await GetActiveUserAsync(connection, actorUsername, cancellationToken);
+            if (actorUser is null)
+            {
+                return BadRequestProblem(
+                    "Invalid created by user",
+                    $"CreatedBy '{actorUsername}' was not found or is inactive. Please enter a valid active username.");
+            }
+
+            var requestedAssignToUsername = NormalizeTimeEntryUsername(FirstNonEmpty(request.AssignToUsername, request.AssignedUser));
+            var assignToUsername = string.IsNullOrWhiteSpace(requestedAssignToUsername)
+                ? actorUsername
+                : requestedAssignToUsername;
+            var assignToUser = await GetActiveUserAsync(connection, assignToUsername, cancellationToken);
+            if (assignToUser is null)
+            {
+                return BadRequestProblem(
+                    "Invalid assigned user",
+                    $"Assigned user '{assignToUsername}' was not found or is inactive. Please enter a valid active username.");
+            }
+
+            var requestedStatus = FirstNonEmpty(request.Status);
+            LookupValue? resolvedStatus = null;
+            if (string.IsNullOrWhiteSpace(requestedStatus) is false)
+            {
+                resolvedStatus = await ResolveLookupValueAsync(
+                    connection,
+                    "dbo.vw_LookupV_Ticket_Status",
+                    requestedStatus,
+                    cancellationToken);
+
+                if (resolvedStatus is null)
+                {
+                    var validStatuses = await GetLookupDescriptionsAsync(connection, "dbo.vw_LookupV_Ticket_Status", cancellationToken);
+                    return BadRequestProblem(
+                        "Invalid status",
+                        $"Status '{requestedStatus}' was not found. Valid statuses: {string.Join(", ", validStatuses)}.");
+                }
+            }
+
+            if (ticket.RoleTypeId <= 0)
+            {
+                return BadRequestProblem(
+                    "Role type required",
+                    "This ticket does not have a saved role type in tbl_Tickets.");
+            }
+
+            var driveTime = request.DriveTime ?? 0.00m;
+            var calculatedHoursWorked = CalculateTimeEntryHours(request.StartDateTime!.Value, request.EndDateTime!.Value, driveTime);
+            if (calculatedHoursWorked <= 0)
+            {
+                return BadRequestProblem(
+                    "Invalid time range",
+                    "HoursWorked must be greater than zero after subtracting DriveTime from the time between StartDateTime and EndDateTime.");
+            }
+
+            var hoursWorked = request.HoursWorked ?? calculatedHoursWorked;
+            if (hoursWorked <= 0)
+            {
+                return BadRequestProblem("Invalid request", "HoursWorked must be greater than zero.");
+            }
+
+            if (hoursWorked > calculatedHoursWorked)
+            {
+                return BadRequestProblem(
+                    "Invalid request",
+                    "HoursWorked cannot be greater than the time between StartDateTime and EndDateTime after subtracting DriveTime.");
+            }
+
+            var effectiveStatusId = resolvedStatus?.Id ?? ticket.StatusId;
+            if (effectiveStatusId <= 0)
+            {
+                return Problem(
+                    title: "Time entry save failed",
+                    detail: $"TicketID '{ticketId}' does not have a valid status ID.",
+                    statusCode: StatusCodes.Status500InternalServerError);
+            }
+
+            var effectiveStatusText = resolvedStatus?.Description ?? ticket.StatusText;
+            var effectiveRoleTypeId = ticket.RoleTypeId;
+            var effectiveRoleTypeText = ticket.RoleTypeText;
+            var effectiveWorkType = NormalizeTimeEntryWorkType(request.WorkType, driveTime);
+            var internalNotes = FirstNonEmpty(request.Internal_Notes, request.InternalNotes);
+            var trimmedNotes = request.Notes?.Trim() ?? string.Empty;
+
+            var xmlInput = BuildTicketTimeEntryXml(
+                ticketId,
+                request.StartDateTime.Value,
+                request.EndDateTime.Value,
+                driveTime,
+                hoursWorked,
+                trimmedNotes,
+                actorUsername,
+                effectiveWorkType,
+                effectiveRoleTypeId,
+                internalNotes,
+                assignToUser.DirId,
+                effectiveStatusId);
+
+            var ticketEntryId = await ExecuteAddTicketTimeEntryAsync(connection, xmlInput, cancellationToken);
+            if (ticketEntryId <= 0)
+            {
+                return Problem(
+                    title: "Time entry was not created",
+                    detail: "The save stored procedure did not return a TicketEntryID.",
+                    statusCode: StatusCodes.Status500InternalServerError);
+            }
+
+            return Ok(new TicketTimeEntryResponse(
+                ticketEntryId,
+                ticketId,
+                actorUsername,
+                assignToUser.DirId,
+                assignToUsername,
+                request.StartDateTime.Value,
+                request.EndDateTime.Value,
+                driveTime,
+                hoursWorked,
+                trimmedNotes,
+                internalNotes,
+                effectiveWorkType,
+                effectiveRoleTypeId,
+                effectiveRoleTypeText,
+                effectiveStatusId,
+                effectiveStatusText,
+                string.IsNullOrWhiteSpace(internalNotes) is false && hoursWorked > 0));
+        }
+        catch (SqlException ex)
+        {
+            return Problem(
+                title: "Time entry save failed",
+                detail: ex.Message,
+                statusCode: StatusCodes.Status500InternalServerError);
+        }
+        catch (Exception ex)
+        {
+            return Problem(
+                title: "Unexpected error",
+                detail: ex.Message,
+                statusCode: StatusCodes.Status500InternalServerError);
+        }
+    }
+
     private IActionResult BadRequestProblem(string title, string detail) =>
         BadRequest(new ProblemDetails
         {
@@ -428,6 +612,41 @@ public sealed class TicketsController : ControllerBase
         if (request.Estimated_Hours is < 0)
         {
             return "Estimated_Hours cannot be negative.";
+        }
+
+        return null;
+    }
+
+    private static string? Validate(AddTicketTimeEntryRequest request)
+    {
+        if (request.StartDateTime is null)
+        {
+            return "StartDateTime is required.";
+        }
+
+        if (request.EndDateTime is null)
+        {
+            return "EndDateTime is required.";
+        }
+
+        if (request.EndDateTime <= request.StartDateTime)
+        {
+            return "EndDateTime must be greater than StartDateTime.";
+        }
+
+        if (request.DriveTime is < 0)
+        {
+            return "DriveTime cannot be negative.";
+        }
+
+        if (request.HoursWorked is <= 0)
+        {
+            return "HoursWorked must be greater than zero.";
+        }
+
+        if (string.IsNullOrWhiteSpace(request.Notes))
+        {
+            return "Notes is required.";
         }
 
         return null;
@@ -1099,6 +1318,46 @@ public sealed class TicketsController : ControllerBase
         return snapshot;
     }
 
+    private static async Task<TicketTimeEntryContext?> GetTicketTimeEntryContextAsync(SqlConnection connection, int ticketId, CancellationToken cancellationToken)
+    {
+        await using var command = new SqlCommand(
+            """
+            SELECT TOP 1
+                   t.TicketID,
+                   ISNULL(t.Status, 0) AS StatusId,
+                   ISNULL(statusLookup.Description, '') AS StatusTxt,
+                   ISNULL(t.RoleType, 0) AS RoleTypeId,
+                   ISNULL(roleLookup.Description, '') AS RoleTypeTxt
+            FROM dbo.tbl_Tickets t
+            LEFT JOIN dbo.vw_LookupV_Ticket_Status statusLookup ON statusLookup.ID = t.Status
+            LEFT JOIN dbo.vw_LookupV_Ticket_RoleType roleLookup ON roleLookup.ID = t.RoleType
+            WHERE t.TicketID = @TicketID;
+            """,
+            connection)
+        {
+            CommandTimeout = 180
+        };
+
+        command.Parameters.Add(new SqlParameter("@TicketID", SqlDbType.Int) { Value = ticketId });
+
+        await using var reader = await command.ExecuteReaderAsync(cancellationToken);
+        if (await reader.ReadAsync(cancellationToken) is false)
+        {
+            await reader.CloseAsync();
+            return null;
+        }
+
+        var context = new TicketTimeEntryContext(
+            Convert.ToInt32(reader.GetValue(0), CultureInfo.InvariantCulture),
+            Convert.ToInt32(reader.GetValue(1), CultureInfo.InvariantCulture),
+            reader.GetString(2),
+            Convert.ToInt32(reader.GetValue(3), CultureInfo.InvariantCulture),
+            reader.GetString(4));
+
+        await reader.CloseAsync();
+        return context;
+    }
+
     private static TicketUpdateSnapshot Merge(
         TicketUpdateSnapshot current,
         UpdateTicketRequest request,
@@ -1142,6 +1401,66 @@ public sealed class TicketsController : ControllerBase
         command.Parameters.Add(new SqlParameter("@Description_RTF", SqlDbType.Text) { Value = ToDbString(ticket.Description_RTF) });
 
         await command.ExecuteNonQueryAsync(cancellationToken);
+    }
+
+    private static XDocument BuildTicketTimeEntryXml(
+        int ticketId,
+        DateTime startDateTime,
+        DateTime endDateTime,
+        decimal driveTime,
+        decimal hoursWorked,
+        string notes,
+        string createdBy,
+        string workType,
+        int roleTypeId,
+        string internalNotes,
+        int assignToUserId,
+        int statusId)
+    {
+        var root = new XElement("TicketEntries",
+            new XElement("TicketEntryID", 0),
+            new XElement("TicketID", ticketId),
+            new XElement("StartDateTime", startDateTime.ToString("s", CultureInfo.InvariantCulture)),
+            new XElement("EndDateTime", endDateTime.ToString("s", CultureInfo.InvariantCulture)),
+            new XElement("DriveTime", driveTime.ToString("0.00", CultureInfo.InvariantCulture)),
+            new XElement("HoursWorked", hoursWorked.ToString("0.00", CultureInfo.InvariantCulture)),
+            new XElement("Notes", notes.Trim()),
+            new XElement("CreatedBy", createdBy),
+            new XElement("WorkType", workType),
+            new XElement("RoleType", roleTypeId),
+            new XElement("AssignToUserID", assignToUserId),
+            new XElement("Status", statusId));
+
+        if (string.IsNullOrWhiteSpace(internalNotes) is false)
+        {
+            root.Add(new XElement("InternalNotes", internalNotes.Trim()));
+        }
+
+        return new XDocument(root);
+    }
+
+    private static async Task<int> ExecuteAddTicketTimeEntryAsync(SqlConnection connection, XDocument xmlInput, CancellationToken cancellationToken)
+    {
+        await using var command = new SqlCommand("dbo.stp_Save_Ticket_Time_Entry_V1", connection)
+        {
+            CommandType = CommandType.StoredProcedure,
+            CommandTimeout = 180
+        };
+
+        command.Parameters.Add(new SqlParameter("@XML_TimeEntry", SqlDbType.Xml)
+        {
+            Value = xmlInput.ToString(SaveOptions.DisableFormatting)
+        });
+
+        var returnValue = new SqlParameter("@ReturnValue", SqlDbType.Int)
+        {
+            Direction = ParameterDirection.ReturnValue
+        };
+        command.Parameters.Add(returnValue);
+
+        await command.ExecuteNonQueryAsync(cancellationToken);
+
+        return returnValue.Value is DBNull or null ? 0 : Convert.ToInt32(returnValue.Value, CultureInfo.InvariantCulture);
     }
 
     private static async Task SyncTicketEntryNotesAsync(
@@ -1264,6 +1583,41 @@ public sealed class TicketsController : ControllerBase
     private static string FirstNonEmpty(params string?[] values) =>
         values.FirstOrDefault(value => string.IsNullOrWhiteSpace(value) is false)?.Trim() ?? string.Empty;
 
+    private static string NormalizeTimeEntryUsername(string? username)
+    {
+        if (string.IsNullOrWhiteSpace(username))
+        {
+            return string.Empty;
+        }
+
+        return string.Equals(username.Trim(), DefaultTimeEntryActorAlias, StringComparison.OrdinalIgnoreCase)
+            ? DefaultTimeEntryActorUsername
+            : username.Trim();
+    }
+
+    private static string NormalizeTimeEntryWorkType(string? workType, decimal driveTime)
+    {
+        if (string.IsNullOrWhiteSpace(workType))
+        {
+            return driveTime > 0 ? "Onsite" : "Offsite";
+        }
+
+        return workType.Trim().ToLowerInvariant() switch
+        {
+            "remote" => "Offsite",
+            "offsite" => "Offsite",
+            "onsite" => "Onsite",
+            "assign" => "Assign",
+            _ => workType.Trim()
+        };
+    }
+
+    private static decimal CalculateTimeEntryHours(DateTime startDateTime, DateTime endDateTime, decimal driveTime)
+    {
+        var totalHours = ((decimal)(endDateTime - startDateTime).TotalMinutes / 60.00m) - driveTime;
+        return Math.Round(totalHours, 2, MidpointRounding.AwayFromZero);
+    }
+
     private static string GetString(SqlDataReader reader, string columnName)
     {
         var ordinal = reader.GetOrdinal(columnName);
@@ -1313,6 +1667,23 @@ public sealed class TicketsController : ControllerBase
         public string? Description_RTF { get; set; }
     }
 
+    public sealed class AddTicketTimeEntryRequest
+    {
+        public DateTime? StartDateTime { get; set; }
+        public DateTime? EndDateTime { get; set; }
+        public decimal? DriveTime { get; set; }
+        public decimal? HoursWorked { get; set; }
+        public string? Notes { get; set; }
+        public string? Internal_Notes { get; set; }
+        public string? InternalNotes { get; set; }
+        public string? Status { get; set; }
+        public string? WorkType { get; set; }
+        public string? AssignToUsername { get; set; }
+        public string? AssignedUser { get; set; }
+        public string? CreatedBy { get; set; }
+        public string? Username { get; set; }
+    }
+
     private sealed record DirectoryUser(int DirId, int ParentId, string LocationTopFilter);
 
     private sealed record PodCandidate(int Id, string Title);
@@ -1324,6 +1695,13 @@ public sealed class TicketsController : ControllerBase
     private sealed record ActiveClientRow(int DirId, string LocationCode, string LocationName);
 
     private sealed record ClientContext(int RequestorDirId, int ClientId, string ClientCode, string ClientName, string LocationTopFilter);
+
+    private sealed record TicketTimeEntryContext(
+        int TicketID,
+        int StatusId,
+        string StatusText,
+        int RoleTypeId,
+        string RoleTypeText);
 
     private sealed record TicketEntryListItem(
         string TicketID,
@@ -1376,4 +1754,23 @@ public sealed class TicketsController : ControllerBase
         DateTime RequestDate,
         string Internal_Notes,
         string Description_RTF);
+
+    private sealed record TicketTimeEntryResponse(
+        int TicketEntryID,
+        int TicketID,
+        string CreatedBy,
+        int AssignToUserID,
+        string AssignToUsername,
+        DateTime StartDateTime,
+        DateTime EndDateTime,
+        decimal DriveTime,
+        decimal HoursWorked,
+        string Notes,
+        string InternalNotes,
+        string WorkType,
+        int RoleType,
+        string RoleTypeTxt,
+        int Status,
+        string StatusTxt,
+        bool CreatedInternalNoteEntry);
 }
