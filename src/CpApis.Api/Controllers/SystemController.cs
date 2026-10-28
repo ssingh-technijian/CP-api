@@ -24,6 +24,7 @@ public sealed class SystemController : ControllerBase
             generatedAtUtc = manifest.GeneratedAtUtc,
             databaseCount = manifest.Databases.Count,
             objectCount = manifest.Objects.Count(item => item.IsIncluded),
+            deniedObjectCount = _catalogService.DeniedObjectKeys.Count,
             swagger = "/swagger"
         });
     }

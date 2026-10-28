@@ -395,15 +395,7 @@ internal sealed partial class InventoryBuilder
 
     private static bool InferWriteOperation(string name)
     {
-        var lowered = name.ToLowerInvariant();
-        return lowered.Contains("save", StringComparison.Ordinal)
-               || lowered.Contains("update", StringComparison.Ordinal)
-               || lowered.Contains("delete", StringComparison.Ordinal)
-               || lowered.Contains("add", StringComparison.Ordinal)
-               || lowered.Contains("insert", StringComparison.Ordinal)
-               || lowered.Contains("approve", StringComparison.Ordinal)
-               || lowered.Contains("assign", StringComparison.Ordinal)
-               || lowered.Contains("mark", StringComparison.Ordinal);
+        return CpApis.Shared.Runtime.StoredProcedureWriteSafety.IsWriteName(name);
     }
 
     private static string GetLine(string content, int lineNumber)

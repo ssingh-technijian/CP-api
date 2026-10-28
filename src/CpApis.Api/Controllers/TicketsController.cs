@@ -69,7 +69,6 @@ public sealed class TicketsController : ControllerBase
         }
     }
 
-    [AllowAnonymous]
     [HttpPost]
     [HttpPost("create")]
     public async Task<IActionResult> CreateTicket([FromBody] CreateTicketRequest? request, CancellationToken cancellationToken)

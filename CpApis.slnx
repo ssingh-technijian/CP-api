@@ -7,4 +7,7 @@
     <Project Path="src/CpApis.InventoryGenerator/CpApis.InventoryGenerator.csproj" />
     <Project Path="src/CpApis.Shared/CpApis.Shared.csproj" />
   </Folder>
+  <Folder Name="/tests/">
+    <Project Path="tests/CpApis.Shared.Tests/CpApis.Shared.Tests.csproj" />
+  </Folder>
 </Solution>

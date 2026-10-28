@@ -1,5 +1,6 @@
 using CpApis.Api.Generated;
 using CpApis.Api.OpenApi;
+using CpApis.Api.Options;
 using CpApis.Api.Services;
 using CpApis.Shared.Options;
 using CpApis.Shared.Services;
@@ -19,7 +20,10 @@ builder.Configuration
     .AddCommandLine(args);
 
 builder.Services.Configure<RuntimeCatalogOptions>(builder.Configuration.GetSection("RuntimeCatalog"));
+builder.Services.Configure<CardPointeOptions>(builder.Configuration.GetSection(CardPointeOptions.SectionName));
+builder.Services.Configure<ClientPortalEmployeeApiOptions>(builder.Configuration.GetSection("ClientPortalEmployee"));
 builder.Services.AddHttpClient();
+builder.Services.AddHttpClient<CardPointeGatewayClient>();
 
 var azureAdSection = builder.Configuration.GetRequiredSection("AzureAd");
 var azureAdInstance = (azureAdSection["Instance"] ?? "https://login.microsoftonline.com/").TrimEnd('/');
@@ -126,6 +130,7 @@ var app = builder.Build();
 app.UseCors("Open");
 app.UseAuthentication();
 app.UseAuthorization();
+app.UseMiddleware<ClientPortalEmployeeApiBoundary>();
 
 app.UseSwagger();
 app.UseSwaggerUI();

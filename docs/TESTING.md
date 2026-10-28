@@ -1,5 +1,11 @@
 # Testing
 
+## Automated checks from a clean checkout
+
+Run `pwsh -File ./scripts/Test-Offline.ps1` for the automated suite. The API and MCP projects copy the ignored generated inventory manifest during builds. If it is absent, this command creates a temporary empty manifest for the test build and removes it afterward, with a hash guard that preserves unexpected changes. An existing manifest is never overwritten or removed. The command does not copy local settings or production inventory.
+
+This temporary manifest is not a deployment inventory. Before running or publishing a service, generate the real database-object inventory through the existing inventory workflow and configure its protected runtime path. Do not deploy the test build's empty manifest.
+
 Current confirmed verification:
 
 - Build the solution with:

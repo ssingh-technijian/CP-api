@@ -15,3 +15,6 @@ artifacts/
 
 # Local-only configuration
 src/**/appsettings.Local.json
+
+# Local secrets and test scratch (bearer tokens, probe scripts) — never commit
+.local/

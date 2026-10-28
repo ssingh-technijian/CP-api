@@ -1,0 +1,1162 @@
+{
+  "Scope": "Every known supported29tool operation and documented input/state dimensions; finite boundary/pairwise coverage, not every conceivable phrase or arbitraryfuturedata",
+  "Tools": [
+    {
+      "Tool": "client_portal_whoami",
+      "Kind": "read-or-status",
+      "ApplicableFamilies": [
+        "authentication-and-tenant-isolation",
+        "native-role-menu-scope",
+        "success-and-missing-data",
+        "argument-and-boundary-validation",
+        "output-completeness-and-budget"
+      ],
+      "Evidence": {
+        "Identity": "319-case EmployeeToolIdentityMatrixTests (11 variants per tool)",
+        "NativeCurrentRead": [
+          {
+            "Scenario": "native-mapped-identity",
+            "Passed": true
+          },
+          {
+            "Scenario": "rejected-signin-cannot-return-data",
+            "Passed": true
+          }
+        ],
+        "ProposalDispatch": null,
+        "Additional": "native-profile-mapping-results.json:24 mapped profiles and unmapped denial"
+      },
+      "RuntimeAcceptance": "Current task real Microsoft SSO connector/chat execution; see live-acceptance-ledger.json and live-tool-rounds.json",
+      "Status": "documented-native-regression-families-verified"
+    },
+    {
+      "Tool": "client_portal_list_tickets",
+      "Kind": "read-or-status",
+      "ApplicableFamilies": [
+        "authentication-and-tenant-isolation",
+        "native-role-menu-scope",
+        "success-and-missing-data",
+        "argument-and-boundary-validation",
+        "output-completeness-and-budget"
+      ],
+      "Evidence": {
+        "Identity": "319-case EmployeeToolIdentityMatrixTests (11 variants per tool)",
+        "NativeCurrentRead": [
+          {
+            "Scenario": "maximum-preview",
+            "Passed": true
+          },
+          {
+            "Scenario": "native-page-continuation-and-empty-page",
+            "Passed": true
+          },
+          {
+            "Scenario": "invalid-offset--1",
+            "Passed": true
+          },
+          {
+            "Scenario": "invalid-offset-5001",
+            "Passed": true
+          },
+          {
+            "Scenario": "rejected-signin-cannot-return-data",
+            "Passed": true
+          }
+        ],
+        "ProposalDispatch": null,
+        "Additional": null
+      },
+      "RuntimeAcceptance": "Native method/SQL and identity regression verified; no separate real-SSO chat replay for this tool in this task",
+      "Status": "documented-native-regression-families-verified"
+    },
+    {
+      "Tool": "client_portal_get_ticket",
+      "Kind": "read-or-status",
+      "ApplicableFamilies": [
+        "authentication-and-tenant-isolation",
+        "native-role-menu-scope",
+        "success-and-missing-data",
+        "argument-and-boundary-validation",
+        "output-completeness-and-budget"
+      ],
+      "Evidence": {
+        "Identity": "319-case EmployeeToolIdentityMatrixTests (11 variants per tool)",
+        "NativeCurrentRead": [
+          {
+            "Scenario": "native-owned-detail",
+            "Passed": true
+          },
+          {
+            "Scenario": "invalid-or-missing-id--1",
+            "Passed": true
+          },
+          {
+            "Scenario": "invalid-or-missing-id-0",
+            "Passed": true
+          },
+          {
+            "Scenario": "invalid-or-missing-id-2147483647",
+            "Passed": true
+          },
+          {
+            "Scenario": "rejected-signin-cannot-return-data",
+            "Passed": true
+          }
+        ],
+        "ProposalDispatch": null,
+        "Additional": "detail-budget-results.json:23 real rollback-only text/line continuation checks"
+      },
+      "RuntimeAcceptance": "Native method/SQL and identity regression verified; no separate real-SSO chat replay for this tool in this task",
+      "Status": "documented-native-regression-families-verified"
+    },
+    {
+      "Tool": "client_portal_create_ticket_draft",
+      "Kind": "proposal",
+      "ApplicableFamilies": [
+        "authentication-and-tenant-isolation",
+        "native-role-menu-scope",
+        "success-and-missing-data",
+        "argument-and-boundary-validation",
+        "output-completeness-and-budget",
+        "human-review-boundary",
+        "reject-expire-stale-replay-atomicity"
+      ],
+      "Evidence": {
+        "Identity": "319-case EmployeeToolIdentityMatrixTests (11 variants per tool)",
+        "NativeCurrentRead": [
+          {
+            "Scenario": "rejected-signin-cannot-return-data",
+            "Passed": true
+          }
+        ],
+        "ProposalDispatch": "local-action-lifecycle-results.json: individual proposal/status/rejection for all12; native-crud-results.json: actual native CRUD/guards55",
+        "Additional": null,
+        "NativePipeline": "native-pipeline-results.json: actual public tool method -> service/store -> authenticated-review engine -> native executor/status/replay, controlled local principal, outer transaction rollback; 155 checks"
+      },
+      "RuntimeAcceptance": "Native method/SQL and identity regression verified; no separate real-SSO chat replay for this tool in this task",
+      "Status": "documented-native-regression-families-verified"
+    },
+    {
+      "Tool": "client_portal_update_ticket_draft",
+      "Kind": "proposal",
+      "ApplicableFamilies": [
+        "authentication-and-tenant-isolation",
+        "native-role-menu-scope",
+        "success-and-missing-data",
+        "argument-and-boundary-validation",
+        "output-completeness-and-budget",
+        "human-review-boundary",
+        "reject-expire-stale-replay-atomicity"
+      ],
+      "Evidence": {
+        "Identity": "319-case EmployeeToolIdentityMatrixTests (11 variants per tool)",
+        "NativeCurrentRead": [
+          {
+            "Scenario": "rejected-signin-cannot-return-data",
+            "Passed": true
+          }
+        ],
+        "ProposalDispatch": "local-action-lifecycle-results.json: individual proposal/status/rejection for all12; native-crud-results.json: actual native CRUD/guards55",
+        "Additional": null,
+        "NativePipeline": "native-pipeline-results.json: actual public tool method -> service/store -> authenticated-review engine -> native executor/status/replay, controlled local principal, outer transaction rollback; 155 checks"
+      },
+      "RuntimeAcceptance": "Native method/SQL and identity regression verified; no separate real-SSO chat replay for this tool in this task",
+      "Status": "documented-native-regression-families-verified"
+    },
+    {
+      "Tool": "client_portal_delete_ticket_draft",
+      "Kind": "proposal",
+      "ApplicableFamilies": [
+        "authentication-and-tenant-isolation",
+        "native-role-menu-scope",
+        "success-and-missing-data",
+        "argument-and-boundary-validation",
+        "output-completeness-and-budget",
+        "human-review-boundary",
+        "reject-expire-stale-replay-atomicity"
+      ],
+      "Evidence": {
+        "Identity": "319-case EmployeeToolIdentityMatrixTests (11 variants per tool)",
+        "NativeCurrentRead": [
+          {
+            "Scenario": "rejected-signin-cannot-return-data",
+            "Passed": true
+          }
+        ],
+        "ProposalDispatch": "local-action-lifecycle-results.json: individual proposal/status/rejection for all12; native-crud-results.json: actual native CRUD/guards55",
+        "Additional": null,
+        "NativePipeline": "native-pipeline-results.json: actual public tool method -> service/store -> authenticated-review engine -> native executor/status/replay, controlled local principal, outer transaction rollback; 155 checks"
+      },
+      "RuntimeAcceptance": "Native method/SQL and identity regression verified; no separate real-SSO chat replay for this tool in this task",
+      "Status": "documented-native-regression-families-verified"
+    },
+    {
+      "Tool": "client_portal_list_time_entries",
+      "Kind": "read-or-status",
+      "ApplicableFamilies": [
+        "authentication-and-tenant-isolation",
+        "native-role-menu-scope",
+        "success-and-missing-data",
+        "argument-and-boundary-validation",
+        "output-completeness-and-budget"
+      ],
+      "Evidence": {
+        "Identity": "319-case EmployeeToolIdentityMatrixTests (11 variants per tool)",
+        "NativeCurrentRead": [
+          {
+            "Scenario": "seven-local-days",
+            "Passed": true
+          },
+          {
+            "Scenario": "native-page-continuation-and-empty-page",
+            "Passed": true
+          },
+          {
+            "Scenario": "invalid-offset--1",
+            "Passed": true
+          },
+          {
+            "Scenario": "invalid-offset-5001",
+            "Passed": true
+          },
+          {
+            "Scenario": "reversed-range",
+            "Passed": true
+          },
+          {
+            "Scenario": "rejected-signin-cannot-return-data",
+            "Passed": true
+          }
+        ],
+        "ProposalDispatch": null,
+        "Additional": null
+      },
+      "RuntimeAcceptance": "Native method/SQL and identity regression verified; no separate real-SSO chat replay for this tool in this task",
+      "Status": "documented-native-regression-families-verified"
+    },
+    {
+      "Tool": "client_portal_create_time_entry_draft",
+      "Kind": "proposal",
+      "ApplicableFamilies": [
+        "authentication-and-tenant-isolation",
+        "native-role-menu-scope",
+        "success-and-missing-data",
+        "argument-and-boundary-validation",
+        "output-completeness-and-budget",
+        "human-review-boundary",
+        "reject-expire-stale-replay-atomicity"
+      ],
+      "Evidence": {
+        "Identity": "319-case EmployeeToolIdentityMatrixTests (11 variants per tool)",
+        "NativeCurrentRead": [
+          {
+            "Scenario": "rejected-signin-cannot-return-data",
+            "Passed": true
+          }
+        ],
+        "ProposalDispatch": "local-action-lifecycle-results.json: individual proposal/status/rejection for all12; native-crud-results.json: actual native CRUD/guards55",
+        "Additional": null,
+        "NativePipeline": "native-pipeline-results.json: actual public tool method -> service/store -> authenticated-review engine -> native executor/status/replay, controlled local principal, outer transaction rollback; 155 checks"
+      },
+      "RuntimeAcceptance": "Native method/SQL and identity regression verified; no separate real-SSO chat replay for this tool in this task",
+      "Status": "documented-native-regression-families-verified"
+    },
+    {
+      "Tool": "client_portal_update_time_entry_draft",
+      "Kind": "proposal",
+      "ApplicableFamilies": [
+        "authentication-and-tenant-isolation",
+        "native-role-menu-scope",
+        "success-and-missing-data",
+        "argument-and-boundary-validation",
+        "output-completeness-and-budget",
+        "human-review-boundary",
+        "reject-expire-stale-replay-atomicity"
+      ],
+      "Evidence": {
+        "Identity": "319-case EmployeeToolIdentityMatrixTests (11 variants per tool)",
+        "NativeCurrentRead": [
+          {
+            "Scenario": "rejected-signin-cannot-return-data",
+            "Passed": true
+          }
+        ],
+        "ProposalDispatch": "local-action-lifecycle-results.json: individual proposal/status/rejection for all12; native-crud-results.json: actual native CRUD/guards55",
+        "Additional": null,
+        "NativePipeline": "native-pipeline-results.json: actual public tool method -> service/store -> authenticated-review engine -> native executor/status/replay, controlled local principal, outer transaction rollback; 155 checks"
+      },
+      "RuntimeAcceptance": "Native method/SQL and identity regression verified; no separate real-SSO chat replay for this tool in this task",
+      "Status": "documented-native-regression-families-verified"
+    },
+    {
+      "Tool": "client_portal_delete_time_entry_draft",
+      "Kind": "proposal",
+      "ApplicableFamilies": [
+        "authentication-and-tenant-isolation",
+        "native-role-menu-scope",
+        "success-and-missing-data",
+        "argument-and-boundary-validation",
+        "output-completeness-and-budget",
+        "human-review-boundary",
+        "reject-expire-stale-replay-atomicity"
+      ],
+      "Evidence": {
+        "Identity": "319-case EmployeeToolIdentityMatrixTests (11 variants per tool)",
+        "NativeCurrentRead": [
+          {
+            "Scenario": "rejected-signin-cannot-return-data",
+            "Passed": true
+          }
+        ],
+        "ProposalDispatch": "local-action-lifecycle-results.json: individual proposal/status/rejection for all12; native-crud-results.json: actual native CRUD/guards55",
+        "Additional": null,
+        "NativePipeline": "native-pipeline-results.json: actual public tool method -> service/store -> authenticated-review engine -> native executor/status/replay, controlled local principal, outer transaction rollback; 155 checks"
+      },
+      "RuntimeAcceptance": "Native method/SQL and identity regression verified; no separate real-SSO chat replay for this tool in this task",
+      "Status": "documented-native-regression-families-verified"
+    },
+    {
+      "Tool": "client_portal_list_invoices",
+      "Kind": "read-or-status",
+      "ApplicableFamilies": [
+        "authentication-and-tenant-isolation",
+        "native-role-menu-scope",
+        "success-and-missing-data",
+        "argument-and-boundary-validation",
+        "output-completeness-and-budget"
+      ],
+      "Evidence": {
+        "Identity": "319-case EmployeeToolIdentityMatrixTests (11 variants per tool)",
+        "NativeCurrentRead": [
+          {
+            "Scenario": "maximum-preview",
+            "Passed": true
+          },
+          {
+            "Scenario": "native-page-continuation-and-empty-page",
+            "Passed": true
+          },
+          {
+            "Scenario": "invalid-offset--1",
+            "Passed": true
+          },
+          {
+            "Scenario": "invalid-offset-5001",
+            "Passed": true
+          },
+          {
+            "Scenario": "rejected-signin-cannot-return-data",
+            "Passed": true
+          }
+        ],
+        "ProposalDispatch": null,
+        "Additional": null
+      },
+      "RuntimeAcceptance": "Native method/SQL and identity regression verified; no separate real-SSO chat replay for this tool in this task",
+      "Status": "documented-native-regression-families-verified"
+    },
+    {
+      "Tool": "client_portal_get_invoice",
+      "Kind": "read-or-status",
+      "ApplicableFamilies": [
+        "authentication-and-tenant-isolation",
+        "native-role-menu-scope",
+        "success-and-missing-data",
+        "argument-and-boundary-validation",
+        "output-completeness-and-budget"
+      ],
+      "Evidence": {
+        "Identity": "319-case EmployeeToolIdentityMatrixTests (11 variants per tool)",
+        "NativeCurrentRead": [
+          {
+            "Scenario": "native-exact-detail",
+            "Passed": true
+          },
+          {
+            "Scenario": "invalid-or-missing-id--1",
+            "Passed": true
+          },
+          {
+            "Scenario": "invalid-or-missing-id-0",
+            "Passed": true
+          },
+          {
+            "Scenario": "invalid-or-missing-id-2147483647",
+            "Passed": true
+          },
+          {
+            "Scenario": "rejected-signin-cannot-return-data",
+            "Passed": true
+          }
+        ],
+        "ProposalDispatch": null,
+        "Additional": "detail-budget-results.json:23 real rollback-only text/line continuation checks"
+      },
+      "RuntimeAcceptance": "Native method/SQL and identity regression verified; no separate real-SSO chat replay for this tool in this task",
+      "Status": "documented-native-regression-families-verified"
+    },
+    {
+      "Tool": "client_portal_create_invoice_draft",
+      "Kind": "proposal",
+      "ApplicableFamilies": [
+        "authentication-and-tenant-isolation",
+        "native-role-menu-scope",
+        "success-and-missing-data",
+        "argument-and-boundary-validation",
+        "output-completeness-and-budget",
+        "human-review-boundary",
+        "reject-expire-stale-replay-atomicity"
+      ],
+      "Evidence": {
+        "Identity": "319-case EmployeeToolIdentityMatrixTests (11 variants per tool)",
+        "NativeCurrentRead": [
+          {
+            "Scenario": "rejected-signin-cannot-return-data",
+            "Passed": true
+          }
+        ],
+        "ProposalDispatch": "local-action-lifecycle-results.json: individual proposal/status/rejection for all12; native-crud-results.json: actual native CRUD/guards55",
+        "Additional": null,
+        "NativePipeline": "native-pipeline-results.json: actual public tool method -> service/store -> authenticated-review engine -> native executor/status/replay, controlled local principal, outer transaction rollback; 155 checks"
+      },
+      "RuntimeAcceptance": "Native method/SQL and identity regression verified; no separate real-SSO chat replay for this tool in this task",
+      "Status": "documented-native-regression-families-verified"
+    },
+    {
+      "Tool": "client_portal_update_invoice_draft",
+      "Kind": "proposal",
+      "ApplicableFamilies": [
+        "authentication-and-tenant-isolation",
+        "native-role-menu-scope",
+        "success-and-missing-data",
+        "argument-and-boundary-validation",
+        "output-completeness-and-budget",
+        "human-review-boundary",
+        "reject-expire-stale-replay-atomicity"
+      ],
+      "Evidence": {
+        "Identity": "319-case EmployeeToolIdentityMatrixTests (11 variants per tool)",
+        "NativeCurrentRead": [
+          {
+            "Scenario": "rejected-signin-cannot-return-data",
+            "Passed": true
+          }
+        ],
+        "ProposalDispatch": "local-action-lifecycle-results.json: individual proposal/status/rejection for all12; native-crud-results.json: actual native CRUD/guards55",
+        "Additional": null,
+        "NativePipeline": "native-pipeline-results.json: actual public tool method -> service/store -> authenticated-review engine -> native executor/status/replay, controlled local principal, outer transaction rollback; 155 checks"
+      },
+      "RuntimeAcceptance": "Native method/SQL and identity regression verified; no separate real-SSO chat replay for this tool in this task",
+      "Status": "documented-native-regression-families-verified"
+    },
+    {
+      "Tool": "client_portal_delete_invoice_draft",
+      "Kind": "proposal",
+      "ApplicableFamilies": [
+        "authentication-and-tenant-isolation",
+        "native-role-menu-scope",
+        "success-and-missing-data",
+        "argument-and-boundary-validation",
+        "output-completeness-and-budget",
+        "human-review-boundary",
+        "reject-expire-stale-replay-atomicity"
+      ],
+      "Evidence": {
+        "Identity": "319-case EmployeeToolIdentityMatrixTests (11 variants per tool)",
+        "NativeCurrentRead": [
+          {
+            "Scenario": "rejected-signin-cannot-return-data",
+            "Passed": true
+          }
+        ],
+        "ProposalDispatch": "local-action-lifecycle-results.json: individual proposal/status/rejection for all12; native-crud-results.json: actual native CRUD/guards55",
+        "Additional": null,
+        "NativePipeline": "native-pipeline-results.json: actual public tool method -> service/store -> authenticated-review engine -> native executor/status/replay, controlled local principal, outer transaction rollback; 155 checks"
+      },
+      "RuntimeAcceptance": "Native method/SQL and identity regression verified; no separate real-SSO chat replay for this tool in this task",
+      "Status": "documented-native-regression-families-verified"
+    },
+    {
+      "Tool": "client_portal_list_contracts",
+      "Kind": "read-or-status",
+      "ApplicableFamilies": [
+        "authentication-and-tenant-isolation",
+        "native-role-menu-scope",
+        "success-and-missing-data",
+        "argument-and-boundary-validation",
+        "output-completeness-and-budget"
+      ],
+      "Evidence": {
+        "Identity": "319-case EmployeeToolIdentityMatrixTests (11 variants per tool)",
+        "NativeCurrentRead": [
+          {
+            "Scenario": "maximum-preview",
+            "Passed": true
+          },
+          {
+            "Scenario": "native-page-continuation-and-empty-page",
+            "Passed": true
+          },
+          {
+            "Scenario": "invalid-offset--1",
+            "Passed": true
+          },
+          {
+            "Scenario": "invalid-offset-5001",
+            "Passed": true
+          },
+          {
+            "Scenario": "rejected-signin-cannot-return-data",
+            "Passed": true
+          }
+        ],
+        "ProposalDispatch": null,
+        "Additional": null
+      },
+      "RuntimeAcceptance": "Current task real Microsoft SSO connector/chat execution; see live-acceptance-ledger.json and live-tool-rounds.json",
+      "Status": "documented-native-regression-families-verified"
+    },
+    {
+      "Tool": "client_portal_get_contract",
+      "Kind": "read-or-status",
+      "ApplicableFamilies": [
+        "authentication-and-tenant-isolation",
+        "native-role-menu-scope",
+        "success-and-missing-data",
+        "argument-and-boundary-validation",
+        "output-completeness-and-budget"
+      ],
+      "Evidence": {
+        "Identity": "319-case EmployeeToolIdentityMatrixTests (11 variants per tool)",
+        "NativeCurrentRead": [
+          {
+            "Scenario": "native-exact-detail",
+            "Passed": true
+          },
+          {
+            "Scenario": "invalid-or-missing-id--1",
+            "Passed": true
+          },
+          {
+            "Scenario": "invalid-or-missing-id-0",
+            "Passed": true
+          },
+          {
+            "Scenario": "invalid-or-missing-id-2147483647",
+            "Passed": true
+          },
+          {
+            "Scenario": "rejected-signin-cannot-return-data",
+            "Passed": true
+          }
+        ],
+        "ProposalDispatch": null,
+        "Additional": null
+      },
+      "RuntimeAcceptance": "Current task real Microsoft SSO connector/chat execution; see live-acceptance-ledger.json and live-tool-rounds.json",
+      "Status": "documented-native-regression-families-verified"
+    },
+    {
+      "Tool": "client_portal_create_contract_draft",
+      "Kind": "proposal",
+      "ApplicableFamilies": [
+        "authentication-and-tenant-isolation",
+        "native-role-menu-scope",
+        "success-and-missing-data",
+        "argument-and-boundary-validation",
+        "output-completeness-and-budget",
+        "human-review-boundary",
+        "reject-expire-stale-replay-atomicity"
+      ],
+      "Evidence": {
+        "Identity": "319-case EmployeeToolIdentityMatrixTests (11 variants per tool)",
+        "NativeCurrentRead": [
+          {
+            "Scenario": "rejected-signin-cannot-return-data",
+            "Passed": true
+          }
+        ],
+        "ProposalDispatch": "local-action-lifecycle-results.json: individual proposal/status/rejection for all12; native-crud-results.json: actual native CRUD/guards55",
+        "Additional": null,
+        "NativePipeline": "native-pipeline-results.json: actual public tool method -> service/store -> authenticated-review engine -> native executor/status/replay, controlled local principal, outer transaction rollback; 155 checks"
+      },
+      "RuntimeAcceptance": "Native method/SQL and identity regression verified; no separate real-SSO chat replay for this tool in this task",
+      "Status": "documented-native-regression-families-verified"
+    },
+    {
+      "Tool": "client_portal_update_contract_draft",
+      "Kind": "proposal",
+      "ApplicableFamilies": [
+        "authentication-and-tenant-isolation",
+        "native-role-menu-scope",
+        "success-and-missing-data",
+        "argument-and-boundary-validation",
+        "output-completeness-and-budget",
+        "human-review-boundary",
+        "reject-expire-stale-replay-atomicity"
+      ],
+      "Evidence": {
+        "Identity": "319-case EmployeeToolIdentityMatrixTests (11 variants per tool)",
+        "NativeCurrentRead": [
+          {
+            "Scenario": "rejected-signin-cannot-return-data",
+            "Passed": true
+          }
+        ],
+        "ProposalDispatch": "local-action-lifecycle-results.json: individual proposal/status/rejection for all12; native-crud-results.json: actual native CRUD/guards55",
+        "Additional": null,
+        "NativePipeline": "native-pipeline-results.json: actual public tool method -> service/store -> authenticated-review engine -> native executor/status/replay, controlled local principal, outer transaction rollback; 155 checks"
+      },
+      "RuntimeAcceptance": "Native method/SQL and identity regression verified; no separate real-SSO chat replay for this tool in this task",
+      "Status": "documented-native-regression-families-verified"
+    },
+    {
+      "Tool": "client_portal_delete_contract_draft",
+      "Kind": "proposal",
+      "ApplicableFamilies": [
+        "authentication-and-tenant-isolation",
+        "native-role-menu-scope",
+        "success-and-missing-data",
+        "argument-and-boundary-validation",
+        "output-completeness-and-budget",
+        "human-review-boundary",
+        "reject-expire-stale-replay-atomicity"
+      ],
+      "Evidence": {
+        "Identity": "319-case EmployeeToolIdentityMatrixTests (11 variants per tool)",
+        "NativeCurrentRead": [
+          {
+            "Scenario": "rejected-signin-cannot-return-data",
+            "Passed": true
+          }
+        ],
+        "ProposalDispatch": "local-action-lifecycle-results.json: individual proposal/status/rejection for all12; native-crud-results.json: actual native CRUD/guards55",
+        "Additional": null,
+        "NativePipeline": "native-pipeline-results.json: actual public tool method -> service/store -> authenticated-review engine -> native executor/status/replay, controlled local principal, outer transaction rollback; 155 checks"
+      },
+      "RuntimeAcceptance": "Native method/SQL and identity regression verified; no separate real-SSO chat replay for this tool in this task",
+      "Status": "documented-native-regression-families-verified"
+    },
+    {
+      "Tool": "client_portal_billing_hours",
+      "Kind": "read-or-status",
+      "ApplicableFamilies": [
+        "authentication-and-tenant-isolation",
+        "native-role-menu-scope",
+        "success-and-missing-data",
+        "argument-and-boundary-validation",
+        "output-completeness-and-budget"
+      ],
+      "Evidence": {
+        "Identity": "319-case EmployeeToolIdentityMatrixTests (11 variants per tool)",
+        "NativeCurrentRead": [
+          {
+            "Scenario": "seven-local-days-native-groups",
+            "Passed": true
+          },
+          {
+            "Scenario": "invalid-client",
+            "Passed": true
+          },
+          {
+            "Scenario": "rejected-signin-cannot-return-data",
+            "Passed": true
+          }
+        ],
+        "ProposalDispatch": null,
+        "Additional": null
+      },
+      "RuntimeAcceptance": "Native method/SQL and identity regression verified; no separate real-SSO chat replay for this tool in this task",
+      "Status": "documented-native-regression-families-verified"
+    },
+    {
+      "Tool": "client_portal_get_action_status",
+      "Kind": "read-or-status",
+      "ApplicableFamilies": [
+        "authentication-and-tenant-isolation",
+        "native-role-menu-scope",
+        "success-and-missing-data",
+        "argument-and-boundary-validation",
+        "output-completeness-and-budget"
+      ],
+      "Evidence": {
+        "Identity": "319-case EmployeeToolIdentityMatrixTests (11 variants per tool)",
+        "NativeCurrentRead": [
+          {
+            "Scenario": "nonexistent-owned-action",
+            "Passed": true
+          },
+          {
+            "Scenario": "rejected-signin-cannot-return-data",
+            "Passed": true
+          }
+        ],
+        "ProposalDispatch": null,
+        "Additional": null,
+        "NativePipeline": "All12 proposed/applied/rejected/replayed states checked in lifecycle/native pipeline"
+      },
+      "RuntimeAcceptance": "Native method/SQL and identity regression verified; no separate real-SSO chat replay for this tool in this task",
+      "Status": "documented-native-regression-families-verified"
+    },
+    {
+      "Tool": "client_portal_find_clients",
+      "Kind": "read-or-status",
+      "ApplicableFamilies": [
+        "authentication-and-tenant-isolation",
+        "native-role-menu-scope",
+        "success-and-missing-data",
+        "argument-and-boundary-validation",
+        "output-completeness-and-budget"
+      ],
+      "Evidence": {
+        "Identity": "319-case EmployeeToolIdentityMatrixTests (11 variants per tool)",
+        "NativeCurrentRead": [
+          {
+            "Scenario": "common-name-bounded-preview",
+            "Passed": true
+          },
+          {
+            "Scenario": "literal-search-length-0",
+            "Passed": true
+          },
+          {
+            "Scenario": "literal-search-length-1",
+            "Passed": true
+          },
+          {
+            "Scenario": "literal-search-length-2",
+            "Passed": true
+          },
+          {
+            "Scenario": "literal-search-length-11",
+            "Passed": true
+          },
+          {
+            "Scenario": "literal-search-length-81",
+            "Passed": true
+          },
+          {
+            "Scenario": "rejected-signin-cannot-return-data",
+            "Passed": true
+          }
+        ],
+        "ProposalDispatch": null,
+        "Additional": null
+      },
+      "RuntimeAcceptance": "Current task real Microsoft SSO connector/chat execution; see live-acceptance-ledger.json and live-tool-rounds.json",
+      "Status": "documented-native-regression-families-verified"
+    },
+    {
+      "Tool": "client_portal_lookup_options",
+      "Kind": "read-or-status",
+      "ApplicableFamilies": [
+        "authentication-and-tenant-isolation",
+        "native-role-menu-scope",
+        "success-and-missing-data",
+        "argument-and-boundary-validation",
+        "output-completeness-and-budget"
+      ],
+      "Evidence": {
+        "Identity": "319-case EmployeeToolIdentityMatrixTests (11 variants per tool)",
+        "NativeCurrentRead": [
+          {
+            "Scenario": "complete-native-options",
+            "Passed": true
+          },
+          {
+            "Scenario": "rejected-signin-cannot-return-data",
+            "Passed": true
+          }
+        ],
+        "ProposalDispatch": null,
+        "Additional": null
+      },
+      "RuntimeAcceptance": "Current task real Microsoft SSO connector/chat execution; see live-acceptance-ledger.json and live-tool-rounds.json",
+      "Status": "documented-native-regression-families-verified"
+    },
+    {
+      "Tool": "client_portal_get_time_entry",
+      "Kind": "read-or-status",
+      "ApplicableFamilies": [
+        "authentication-and-tenant-isolation",
+        "native-role-menu-scope",
+        "success-and-missing-data",
+        "argument-and-boundary-validation",
+        "output-completeness-and-budget"
+      ],
+      "Evidence": {
+        "Identity": "319-case EmployeeToolIdentityMatrixTests (11 variants per tool)",
+        "NativeCurrentRead": [
+          {
+            "Scenario": "native-owned-detail",
+            "Passed": true
+          },
+          {
+            "Scenario": "invalid-or-missing-id--1",
+            "Passed": true
+          },
+          {
+            "Scenario": "invalid-or-missing-id-0",
+            "Passed": true
+          },
+          {
+            "Scenario": "invalid-or-missing-id-2147483647",
+            "Passed": true
+          },
+          {
+            "Scenario": "rejected-signin-cannot-return-data",
+            "Passed": true
+          }
+        ],
+        "ProposalDispatch": null,
+        "Additional": "detail-budget-results.json:23 real rollback-only text/line continuation checks"
+      },
+      "RuntimeAcceptance": "Native method/SQL and identity regression verified; no separate real-SSO chat replay for this tool in this task",
+      "Status": "documented-native-regression-families-verified"
+    },
+    {
+      "Tool": "client_portal_find_employees",
+      "Kind": "read-or-status",
+      "ApplicableFamilies": [
+        "authentication-and-tenant-isolation",
+        "native-role-menu-scope",
+        "success-and-missing-data",
+        "argument-and-boundary-validation",
+        "output-completeness-and-budget"
+      ],
+      "Evidence": {
+        "Identity": "319-case EmployeeToolIdentityMatrixTests (11 variants per tool)",
+        "NativeCurrentRead": [
+          {
+            "Scenario": "native-unique-name",
+            "Passed": true
+          },
+          {
+            "Scenario": "literal-search-length-0",
+            "Passed": true
+          },
+          {
+            "Scenario": "literal-search-length-1",
+            "Passed": true
+          },
+          {
+            "Scenario": "literal-search-length-2",
+            "Passed": true
+          },
+          {
+            "Scenario": "literal-search-length-11",
+            "Passed": true
+          },
+          {
+            "Scenario": "literal-search-length-81",
+            "Passed": true
+          },
+          {
+            "Scenario": "rejected-signin-cannot-return-data",
+            "Passed": true
+          }
+        ],
+        "ProposalDispatch": null,
+        "Additional": null
+      },
+      "RuntimeAcceptance": "Native method/SQL and identity regression verified; no separate real-SSO chat replay for this tool in this task",
+      "Status": "documented-native-regression-families-verified"
+    },
+    {
+      "Tool": "client_portal_ticket_activity",
+      "Kind": "read-or-status",
+      "ApplicableFamilies": [
+        "authentication-and-tenant-isolation",
+        "native-role-menu-scope",
+        "success-and-missing-data",
+        "argument-and-boundary-validation",
+        "output-completeness-and-budget"
+      ],
+      "Evidence": {
+        "Identity": "319-case EmployeeToolIdentityMatrixTests (11 variants per tool)",
+        "NativeCurrentRead": [
+          {
+            "Scenario": "maximum-preview",
+            "Passed": true
+          },
+          {
+            "Scenario": "named-period-today",
+            "Passed": true
+          },
+          {
+            "Scenario": "named-period-yesterday",
+            "Passed": true
+          },
+          {
+            "Scenario": "named-period-last_2_days",
+            "Passed": true
+          },
+          {
+            "Scenario": "named-period-last_7_days",
+            "Passed": true
+          },
+          {
+            "Scenario": "named-period-this_week",
+            "Passed": true
+          },
+          {
+            "Scenario": "named-period-last_week",
+            "Passed": true
+          },
+          {
+            "Scenario": "named-period-this_month",
+            "Passed": true
+          },
+          {
+            "Scenario": "named-period-last_month",
+            "Passed": true
+          },
+          {
+            "Scenario": "rejected-signin-cannot-return-data",
+            "Passed": true
+          }
+        ],
+        "ProposalDispatch": null,
+        "Additional": null
+      },
+      "RuntimeAcceptance": "Current task real Microsoft SSO connector/chat execution; see live-acceptance-ledger.json and live-tool-rounds.json",
+      "Status": "documented-native-regression-families-verified"
+    },
+    {
+      "Tool": "client_portal_get_eod",
+      "Kind": "read-or-status",
+      "ApplicableFamilies": [
+        "authentication-and-tenant-isolation",
+        "native-role-menu-scope",
+        "success-and-missing-data",
+        "argument-and-boundary-validation",
+        "output-completeness-and-budget"
+      ],
+      "Evidence": {
+        "Identity": "319-case EmployeeToolIdentityMatrixTests (11 variants per tool)",
+        "NativeCurrentRead": [
+          {
+            "Scenario": "named-employee-maximum-preview",
+            "Passed": true
+          },
+          {
+            "Scenario": "employee-name-id-mismatch",
+            "Passed": true
+          },
+          {
+            "Scenario": "future-custom-rejected",
+            "Passed": true
+          },
+          {
+            "Scenario": "rejected-signin-cannot-return-data",
+            "Passed": true
+          }
+        ],
+        "ProposalDispatch": null,
+        "Additional": null
+      },
+      "RuntimeAcceptance": "Native method/SQL and identity regression verified; no separate real-SSO chat replay for this tool in this task",
+      "Status": "documented-native-regression-families-verified"
+    },
+    {
+      "Tool": "client_portal_get_ticket_history",
+      "Kind": "read-or-status",
+      "ApplicableFamilies": [
+        "authentication-and-tenant-isolation",
+        "native-role-menu-scope",
+        "success-and-missing-data",
+        "argument-and-boundary-validation",
+        "output-completeness-and-budget"
+      ],
+      "Evidence": {
+        "Identity": "319-case EmployeeToolIdentityMatrixTests (11 variants per tool)",
+        "NativeCurrentRead": [
+          {
+            "Scenario": "maximum-preview",
+            "Passed": true
+          },
+          {
+            "Scenario": "invalid-or-missing-id--1",
+            "Passed": true
+          },
+          {
+            "Scenario": "invalid-or-missing-id-0",
+            "Passed": true
+          },
+          {
+            "Scenario": "invalid-or-missing-id-2147483647",
+            "Passed": true
+          },
+          {
+            "Scenario": "rejected-signin-cannot-return-data",
+            "Passed": true
+          }
+        ],
+        "ProposalDispatch": null,
+        "Additional": null
+      },
+      "RuntimeAcceptance": "Native method/SQL and identity regression verified; no separate real-SSO chat replay for this tool in this task",
+      "Status": "documented-native-regression-families-verified"
+    }
+  ],
+  "SharedEvidence": {
+    "NativeReadAndBoundary": 95,
+    "NativeReporting": 28,
+    "NativeCrud": 55,
+    "ActionLifecycle": 89,
+    "Identity": 319,
+    "LongRecordReads": 23,
+    "MappedProfiles": 24,
+    "ForbiddenModelApproval": "server/client exact name boundary and separate authenticated review; approval method never an MCP tool"
+  },
+  "KnownLimits": [
+    "Commercial invoice generation/pricing/signing/payment/accounting export remain native workflows",
+    "Native permissions and24 immutable mappings remain unchanged",
+    "History actor gaps remain unknown",
+    "Dates/cursor boundaries must be disclosed",
+    "No blind model retry/polling or repeat of passing model probes"
+  ],
+  "Pending": [
+    "final updated-source regression and independent cleanup",
+    "native per-operation tool/service/native pipeline strengthen if feasible",
+    "guarded runtime rollout/schema sync/assistant instructions",
+    "new natural-language multistep/ambiguity/missing-fields/unsupported cases",
+    "owned fixture/chat cleanup and final downstream evidence"
+  ],
+  "Status": "verified-supported-matrix-with-explicit-limits",
+  "VerifiedUtc": "2026-10-27T18:26:35.061Z",
+  "Metrics": {
+    "SupportedTools": 29,
+    "ReadLookupStatusTools": 17,
+    "ProposalTools": 12,
+    "ClientPortalUnitTests": 511,
+    "IdentityCasesWithinUnitTests": 319,
+    "BackendTestsOnD15": 3082,
+    "ReportingPolicyCasesWithinBackendTests": 9,
+    "NativeReadAndBoundaryChecks": 95,
+    "NativeReportingFixtureChecks": 28,
+    "NativeCrudAndGuardChecks": 55,
+    "ActionLifecycleChecks": 89,
+    "PublicToolToNativeWritePipelineChecks": 155,
+    "LongTextAndLineContinuationChecks": 23,
+    "ClientAndOptionPaginationChecks": 8,
+    "ExistingProfileMappingsVerified": 24,
+    "NewLiveUserTurns": 6,
+    "ActualMcpToolRounds": 14,
+    "FinalBusinessCleanupChecks": 126,
+    "FinalFixtureGroups": 9,
+    "RemainingBusinessFixtureRows": 0,
+    "EarlierActiveConversationsPreserved": 14
+  },
+  "CoverageFamilies": [
+    "All29 registered entry points and 11 rejected identity variants per tool",
+    "Native menu/role/profile checks and all24 enabled mappings; unmapped denial",
+    "Ticket, own-time-entry, draft invoice and draft contract create/edit/delete proposal lifecycles",
+    "Required and invalid arguments, dates/timezones, missing/native NULL records and historical parent/location linkage",
+    "Complete totals, empty later pages, advancing offsets, response budget and Unicode/text/line continuation",
+    "Human review, reject/expire/revoke/stale state, nonce/replay, atomicity and concurrency guards",
+    "Natural-language lookup chains, ambiguity, missing fields, unsupported operations and faithful monthly totals"
+  ],
+  "LiveAcceptance": [
+    {
+      "Name": "all-client-matches-pagination",
+      "ExpectedTotal": 25,
+      "Status": "passed",
+      "ReturnedIds": [
+        6240,
+        8045,
+        5323,
+        8102,
+        5374,
+        4391,
+        207,
+        208,
+        194,
+        2979,
+        3143,
+        3016,
+        193,
+        206,
+        209,
+        8078,
+        5274,
+        139,
+        3002,
+        205,
+        210,
+        2805,
+        8077,
+        3001,
+        4457
+      ]
+    },
+    {
+      "Name": "inactive-name-fails-safe",
+      "Status": "passed",
+      "NativeActive": false,
+      "Expected": "unresolved, not zero or guessed client"
+    },
+    {
+      "Name": "exact-historical-location-contracts-detail-chain",
+      "ExpectedLocationId": 4757,
+      "ExpectedContractCount": 3,
+      "Status": "passed",
+      "ActualContractIds": [
+        4993,
+        4287,
+        4172
+      ],
+      "NullParentsPreserved": true
+    },
+    {
+      "Name": "ambiguous-client-and-required-ticket-fields",
+      "Status": "passed",
+      "Result": "25ambiguous matches, asks client/title/description/role, no proposal or fabricated completion"
+    },
+    {
+      "Name": "unsupported-commercial-payment-signing-export",
+      "Status": "passed",
+      "Result": "draft-only changes, reviewed application, no payments/signing/export/finalized priced invoices; no proposal"
+    },
+    {
+      "Name": "monthly-reporting-live-after-timeout-fix",
+      "Status": "passed",
+      "Counts": {
+        "createdByEmployeeTicketCount": 23,
+        "closedTicketCount": 0,
+        "closureEventCount": 0,
+        "unattributedOwnedClosureCount": 11
+      },
+      "TimeZone": "India Standard Time",
+      "NativeOracleElapsedMs": 3647,
+      "AttributionWarningPreserved": true
+    }
+  ],
+  "Limits": [
+    "Finite supported-operation and boundary/state coverage; not every arbitrary phrase, future data state, permission combination or infrastructure outage.",
+    "Current real Microsoft SSO was verified for the signed-in employee. Other existing profiles were checked against native identity mappings and permissions, not interactive sign-ins as every employee.",
+    "The12 full native write pipelines used controlled local principals and transaction rollback. They were not12 distinct real OAuth/HTTP write approvals in this task. The existing real-SSO human-review bridge evidence is retained from the earlier acceptance.",
+    "Client-name lookup searches active clients/locations. Historical inactive records require an authoritative exact ID; missing names are unresolved, never zero.",
+    "Finance writes support eligible draft metadata only. Final priced invoices, signing, payments, accounting export, and commercial billing correctness require their native workflows and additional evidence.",
+    "One initial native pipeline run failed at contract.edit proposal19 without a captured underlying cause. The isolated contract pipeline and the complete155-check run then passed without changing action production code. Original failure and diagnostic instrumentation are retained; root cause remains unverified.",
+    "Six new user turns ran on API d15db9582. A concurrent b56f0f1b0 release subsequently retained identical MCP and chat execution source; current SSO/discovery/policy/sharing/cleanup were rechecked without repeating passing model probes.",
+    "Some legacy closure events have no trustworthy recorded actor. Reports disclose unknown attribution; missing historical identities cannot be reconstructed as verified facts."
+  ],
+  "Runtime": {
+    "McpDomain": "https://alpha-cp-mcp.technijian.com/mcp",
+    "PortalApi": "https://api-clientportal.technijian.com",
+    "Chat": "https://rtm-chat.technijian.ai",
+    "AssistantSharing": "Technijian tenant; public=false",
+    "Auth": "Microsoft employee on-behalf-of; existing native permissions; no new grants/secrets",
+    "TestedApiCommit": "d15db95824e8455732b7799744904313d79ac564",
+    "LatestObservedApiCommit": "b56f0f1b02a581172acb89a84071869925efbfa4",
+    "LatestObservedApiHash": "F6C117E685F589CA29D21FAB01FEC0C1719833AAEBDA2C9ADC2A22605AE146A0",
+    "SourceReviewPr": "https://github.com/technijian-usa/tech-web-chatai.v8/pull/29",
+    "SourceIntegration": "Merged three-file reporting regression into current WorkBench branch; no unrelated PR merged",
+    "CpSourceSnapshot": "cp-source-snapshot-manifest.json",
+    "LatestSsoVerified": true,
+    "LatestDiscoveryCount": 29,
+    "AdministratorSessionsClosed": true,
+    "SourceIntegrationCommit": "9ad0f106e9ea65ef62cf07300161a476b4dab773"
+  }
+}

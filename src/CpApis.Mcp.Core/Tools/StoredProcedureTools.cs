@@ -73,7 +73,7 @@ public sealed class StoredProcedureTools
 
         if (includeWriteProcedures is false)
         {
-            query = query.Where(item => item.IsWriteOperation is false);
+            query = query.Where(item => StoredProcedureWriteSafety.IsWriteOperation(item) is false);
         }
 
         if (string.IsNullOrWhiteSpace(search) is false)
@@ -116,7 +116,7 @@ public sealed class StoredProcedureTools
             Schema = item.Schema,
             Name = item.Name,
             IsActiveRoot = item.IsActiveRoot,
-            IsWriteOperation = item.IsWriteOperation,
+            IsWriteOperation = StoredProcedureWriteSafety.IsWriteOperation(item),
             ExecutePath = "/" + _apiClient.BuildExecutePath(item),
             BodyDescription = StoredProcedureMetadataBuilder.BuildRequestBodyDescription(item),
             RequestTemplate = StoredProcedureMetadataBuilder.BuildRequestTemplate(item),
@@ -154,7 +154,8 @@ public sealed class StoredProcedureTools
     {
         var item = _catalogService.GetRequiredObject(databaseAlias, "stored-procedure", schema, name);
 
-        if (_options.RequireWriteConfirmation && item.IsWriteOperation && allowWrite is false)
+        var isWriteOperation = StoredProcedureWriteSafety.IsWriteOperation(item);
+        if (_options.RequireWriteConfirmation && isWriteOperation && allowWrite is false)
         {
             return new StoredProcedureExecutionResult
             {
@@ -164,11 +165,34 @@ public sealed class StoredProcedureTools
             };
         }
 
+        if (ClientPortalMcpSafety.IsUnsafeLegacyDelete(item))
+            return new StoredProcedureExecutionResult
+            {
+                Executed = false,
+                Message = "Legacy time-entry deletion is disabled in MCP because it bypasses approval, billing and employee checks. Use the authorized Client Portal review workflow."
+            };
+
+        var staffError = ClientPortalMcpSafety.ValidateStaffLookup(item, parameters);
+        if (staffError is not null)
+            return new StoredProcedureExecutionResult { Executed = false, Message = staffError };
+
+        var patch = ClientPortalMcpSafety.PrepareTicketPatch(item, parameters);
+        if (patch.Error is not null)
+            return new StoredProcedureExecutionResult { Executed = false, Message = patch.Error };
+        if (patch.UsePatch)
+            return new StoredProcedureExecutionResult
+            {
+                Executed = true, WriteConfirmationBypassed = allowWrite,
+                Response = await _apiClient.PatchTicketAsync(item, patch.TicketId, patch.Body!),
+                Message = $"Updated ticket {patch.TicketId} through api/tickets/{patch.TicketId}; omitted fields use the native partial-update behavior."
+            };
+
         var response = await _apiClient.ExecuteStoredProcedureAsync(item, parameters);
+        response = ClientPortalMcpSafety.ProjectStaffDirectory(item, response);
         return new StoredProcedureExecutionResult
         {
             Executed = true,
-            WriteConfirmationBypassed = item.IsWriteOperation && allowWrite,
+            WriteConfirmationBypassed = isWriteOperation && allowWrite,
             Response = response,
             Message = $"Executed {databaseAlias}:{schema}.{name} through {_apiClient.BuildExecutePath(item)}"
         };
@@ -183,7 +207,7 @@ public sealed class StoredProcedureTools
             Schema = item.Schema,
             Name = item.Name,
             IsActiveRoot = item.IsActiveRoot,
-            IsWriteOperation = item.IsWriteOperation,
+            IsWriteOperation = StoredProcedureWriteSafety.IsWriteOperation(item),
             InputParameterCount = StoredProcedureMetadataBuilder.GetInputParameters(item).Count,
             ExecutePath = "/" + _apiClient.BuildExecutePath(item)
         };
